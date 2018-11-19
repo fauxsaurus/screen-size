@@ -29,11 +29,11 @@
 	{
 		const
 		{innerHeight:h,innerWidth:w}=window,
-		el=Object.assign(document.createElement('div'),{id:'measure'})
+		el=document.querySelector('#measure')
+		
 
-		document.body.innerHTML=''
+		document.querySelector('main').innerHTML=''
 
-		document.body.appendChild(el)
 
 		const factors=Object.keys(units)
 		.reduce(function(obj,unit)
@@ -42,10 +42,6 @@
 
 			return Object.assign(obj,{[unit]:width(el)})
 		},{})
-
-		el.remove()
-
-		console.log(factors)
 
 		const headings=Object.entries(factors)
 		.map(function([unit,scale])
@@ -57,3 +53,6 @@
 		.forEach(el=>document.body.appendChild(el))
 	}
 </script>
+<h1>How big is my screen in _?</h1>
+<main></main>
+<div id=measure></div>
