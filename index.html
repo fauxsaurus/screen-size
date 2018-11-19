@@ -1,0 +1,59 @@
+<!Doctype html>
+<meta charset=utf-8>
+<meta name=mobile-web-app-capable content=yes>
+<meta name=viewport content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+<style>
+	#measure
+	{
+		opacity:0;
+	}
+</style>
+<script>
+	'use strict'
+
+	const
+	resize=(el,unit)=>el.style=`height:1${unit}; width:1${unit};`,
+	width=el=>el.getClientRects()[0].width,
+	units=
+	{
+		'cm':'centimeters',
+		'em':'font size',
+		'in':'inches',
+		'mm':'millimeters',
+		'pc':'picas',
+		'pt':'points',
+		'px':'pixels'
+	}
+
+	onload=onresize=function()
+	{
+		const
+		{innerHeight:h,innerWidth:w}=window,
+		el=Object.assign(document.createElement('div'),{id:'measure'})
+
+		document.body.innerHTML=''
+
+		document.body.appendChild(el)
+
+		const factors=Object.keys(units)
+		.reduce(function(obj,unit)
+		{
+			resize(el,unit)
+
+			return Object.assign(obj,{[unit]:width(el)})
+		},{})
+
+		el.remove()
+
+		console.log(factors)
+
+		const headings=Object.entries(factors)
+		.map(function([unit,scale])
+		{
+
+			return `${Math.round(w/scale)}x${Math.round(h/scale)} ${unit} (${units[unit]})`
+		})
+		.map(innerHTML=>Object.assign(document.createElement('div'),{innerHTML}))
+		.forEach(el=>document.body.appendChild(el))
+	}
+</script>
