@@ -9,10 +9,44 @@
 		background-image:
 			linear-gradient(90deg,transparent 50%,#5555 50%),
 			linear-gradient(0deg,transparent 50%,#5555 50%);
-		background-size:1em 1em;
-		background-position:0 0,1em 1em;
 		color:#fff;
 		text-align:center;
+	}
+	body,
+	[data-unit="px"]
+	{
+		background-size:2px 2px;
+		background-position:0 0,2px 2px;
+	}
+	[data-unit="cm"]
+	{
+		background-size:2cm 2cm;
+		background-position:0 0,2cm 2cm;
+	}
+	[data-unit="in"]
+	{
+		background-size:2in 2in;
+		background-position:0 0,2in 2in;
+	}
+	[data-unit="mm"]
+	{
+		background-size:2mm 2mm;
+		background-position:0 0,2mm 2mm;
+	}
+	[data-unit="pc"]
+	{
+		background-size:2pc 2pc;
+		background-position:0 0,2pc 2pc;
+	}
+	[data-unit="pt"]
+	{
+		background-size:2pt 2pt;
+		background-position:0 0,2pt 2pt;
+	}
+	[data-unit="rem"]
+	{
+		background-size:2rem 2rem;
+		background-position:0 0,2rem 2rem;
 	}
 	#measure
 	{
@@ -28,12 +62,17 @@
 	units=
 	{
 		'cm':'centimeters',
-		'em':'font size',
 		'in':'inches',
 		'mm':'millimeters',
 		'pc':'picas',
 		'pt':'points',
-		'px':'pixels'
+		'px':'pixels',
+		'rem':'font size'
+	}
+
+	function changeUnit(unit)
+	{
+		document.body.setAttribute('data-unit',unit)
 	}
 
 	onload=onresize=function()
@@ -57,10 +96,13 @@
 		const headings=Object.entries(factors)
 		.map(function([unit,scale])
 		{
+			const el=document.createElement('h2')
 
-			return `${Math.round(w/scale)}x${Math.round(h/scale)} ${unit} (${units[unit]})`
+			el.innerHTML=`${Math.round(w/scale)}x${Math.round(h/scale)} ${unit} (${units[unit]})`
+			el.setAttribute('onpointerover',`changeUnit('${unit}')`)
+	
+			return el
 		})
-		.map(innerHTML=>Object.assign(document.createElement('h2'),{innerHTML}))
 		.forEach(el=>document.querySelector('main').appendChild(el))
 	}
 </script>
