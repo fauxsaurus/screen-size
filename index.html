@@ -5,49 +5,25 @@
 <style>
 	body
 	{
+		--size:2px 2px;
+
 		background-color:#222;
 		background-image:
 			linear-gradient(90deg,transparent 50%,#5555 50%),
 			linear-gradient(0deg,transparent 50%,#5555 50%);
 		color:#fff;
+		background-size:var(--size);
+		background-position:0 0,var(--size);
 		text-align:center;
 	}
-	body,
-	[data-unit="px"]
-	{
-		background-size:2px 2px;
-		background-position:0 0,2px 2px;
-	}
-	[data-unit="cm"]
-	{
-		background-size:2cm 2cm;
-		background-position:0 0,2cm 2cm;
-	}
-	[data-unit="in"]
-	{
-		background-size:2in 2in;
-		background-position:0 0,2in 2in;
-	}
-	[data-unit="mm"]
-	{
-		background-size:2mm 2mm;
-		background-position:0 0,2mm 2mm;
-	}
-	[data-unit="pc"]
-	{
-		background-size:2pc 2pc;
-		background-position:0 0,2pc 2pc;
-	}
-	[data-unit="pt"]
-	{
-		background-size:2pt 2pt;
-		background-position:0 0,2pt 2pt;
-	}
-	[data-unit="rem"]
-	{
-		background-size:2rem 2rem;
-		background-position:0 0,2rem 2rem;
-	}
+	[data-unit="px"]{--size:2px 2px;}
+	[data-unit="cm"]{--size:2cm 2cm;}
+	[data-unit="in"]{--size:2in 2in;}
+	[data-unit="mm"]{--size:2mm 2mm;}
+	[data-unit="pc"]{--size:2pc 2pc;}
+	[data-unit="pt"]{--size:2pt 2pt;}
+	[data-unit="rem"]{--size:2rem 2rem;}
+
 	#measure
 	{
 		opacity:0;
