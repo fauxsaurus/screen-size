@@ -28,6 +28,22 @@
 	{
 		opacity:0;
 	}
+
+	h2
+	{
+		opacity:0.5;
+	}
+
+	[data-unit="px"] [onpointerover="changeUnit('px')"],
+	[data-unit="cm"] [onpointerover="changeUnit('cm')"],
+	[data-unit="in"] [onpointerover="changeUnit('in')"],
+	[data-unit="mm"] [onpointerover="changeUnit('mm')"],
+	[data-unit="pc"] [onpointerover="changeUnit('pc')"],
+	[data-unit="pt"] [onpointerover="changeUnit('pt')"],
+	[data-unit="rem"] [onpointerover="changeUnit('rem')"]
+	{
+		opacity:1;
+	}
 </style>
 <script>
 	'use strict'
