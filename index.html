@@ -108,7 +108,7 @@
 
 			/** @note Record<unitType, pixelCount> */
 			const unitMeasurements = Object.keys(UNITS)
-				.sort()
+				.sort((a, b) => a.toLocaleLowerCase().localeCompare(b.toLocaleLowerCase()))
 				.reduce((obj, unit) => Object.assign(obj, {[unit]: measureUnitInPixels(unit)}), {})
 
 			/** @note update displayed measurements */
