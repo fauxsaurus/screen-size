@@ -48,8 +48,12 @@
 			z-index: -1;
 		}
 
-		h3 {
+		h2 {
 			color: var(--colorUnselectedText);
+		}
+
+		h2:hover {
+			cursor: pointer;
 		}
 	</style>
 	<style id="selected-unit-styles"></style>
@@ -95,8 +99,8 @@
 
 		const changeUnit = unit => void document.body.setAttribute('data-unit', unit)
 		const getAndOrCreateElement = unit =>
-			document.querySelector(`h3[data-unit="${unit}"]`) ||
-			document.body.appendChild(setAttribute(document.createElement('h3'), 'data-unit', unit))
+			document.querySelector(`h2[data-unit="${unit}"]`) ||
+			document.body.appendChild(setAttribute(document.createElement('h2'), 'data-unit', unit))
 
 		window.onresize = () => {
 			/** @note The element to be resized to get the dimensions of each unit in pixels. */
@@ -131,7 +135,7 @@
 			document.querySelector('#selected-unit-styles').innerHTML = Object.keys(UNITS)
 				.flatMap(unit => [
 					`[data-unit="${unit}"]{--sizeBackground: 1${unit};}`,
-					`[data-unit="${unit}"] h3[data-unit="${unit}"]{color:var(--colorSelectedText); }`,
+					`[data-unit="${unit}"] h2[data-unit="${unit}"]{color:var(--colorSelectedText); }`,
 				])
 				.join('\n')
 		}
