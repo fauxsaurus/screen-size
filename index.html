@@ -122,7 +122,7 @@
 				const width = (window.innerWidth / scale).toFixed(2)
 				const height = (window.innerHeight / scale).toFixed(2)
 
-				heading.innerHTML = `${width}x${height} ${unit} (${UNITS[unit]})`
+				heading.innerHTML = `${width}x${height}${unit} (${UNITS[unit]})`
 				heading.addEventListener('pointerover', () => changeUnit(unit))
 
 				return heading
