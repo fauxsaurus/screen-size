@@ -1,103 +1,131 @@
-<!Doctype html>
-<meta charset=utf-8>
-<meta name=mobile-web-app-capable content=yes>
-<meta name=viewport content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-<style>
-	body
-	{
-		--size:2px 2px;
+<!DOCTYPE html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="mobile-web-app-capable" content="yes" />
+	<meta
+		name="viewport"
+		content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"
+	/>
+	<style>
+		html,
+		body {
+			margin: 0;
+			min-height: 100vh;
+			padding: 0;
+			position: relative;
+			width: 100%;
+		}
 
-		background-color:#222;
-		background-image:
-			linear-gradient(90deg,transparent 50%,#5555 50%),
-			linear-gradient(0deg,transparent 50%,#5555 50%);
-		color:#fff;
-		background-size:var(--size);
-		background-position:0 0,var(--size);
-		text-align:center;
-	}
-	[data-unit="px"]{--size:2px 2px;}
-	[data-unit="cm"]{--size:2cm 2cm;}
-	[data-unit="in"]{--size:2in 2in;}
-	[data-unit="mm"]{--size:2mm 2mm;}
-	[data-unit="pc"]{--size:2pc 2pc;}
-	[data-unit="pt"]{--size:2pt 2pt;}
-	[data-unit="rem"]{--size:2rem 2rem;}
+		body {
+			--colorSelectedText: #fff;
+			--colorUnselectedText: #ccc;
 
-	#measure
-	{
-		opacity:0;
-	}
+			--sizeBackground: calc(var(--sizeUnit) * 2);
+			--sizeUnit: 1px;
 
-	h2
-	{
-		opacity:0.5;
-	}
+			background: repeating-conic-gradient(#222 0% 25%, #fc0 0% 50%) 50% /
+				var(--sizeBackground) var(--sizeBackground);
+			background-position: var(--sizeUnit) var(--sizeUnit);
+			color: #fff;
+			font-family: Arial, Helvetica, sans-serif;
+			text-align: center;
+			text-shadow: -1px -1px 0 #222, 1px -1px 0 #222, 1px 1px 0 #222, 1px 1px 0 #222;
+		}
 
-	[data-unit="px"] [onpointerover="changeUnit('px')"],
-	[data-unit="cm"] [onpointerover="changeUnit('cm')"],
-	[data-unit="in"] [onpointerover="changeUnit('in')"],
-	[data-unit="mm"] [onpointerover="changeUnit('mm')"],
-	[data-unit="pc"] [onpointerover="changeUnit('pc')"],
-	[data-unit="pt"] [onpointerover="changeUnit('pt')"],
-	[data-unit="rem"] [onpointerover="changeUnit('rem')"]
-	{
-		opacity:1;
-	}
-</style>
-<script>
-	'use strict'
+		#measure {
+			position: fixed;
+			opacity: 0;
+			z-index: -1;
+		}
 
-	const
-	resize=(el,unit)=>el.style=`height:1${unit}; width:1${unit};`,
-	width=el=>el.getClientRects()[0].width,
-	units=
-	{
-		'cm':'centimeters',
-		'in':'inches',
-		'mm':'millimeters',
-		'pc':'picas',
-		'pt':'points',
-		'px':'pixels',
-		'rem':'font size'
-	}
+		h3 {
+			color: var(--colorUnselectedText);
+		}
+	</style>
+	<style id="selected-unit-styles"></style>
+</head>
+<body data-unit="px">
+	<script>
+		'use strict'
 
-	function changeUnit(unit)
-	{
-		document.body.setAttribute('data-unit',unit)
-	}
+		/** @type Record<unit, description> */
+		const UNITS = {
+			// absolute:
+			cm: 'centimeters',
+			in: 'inches',
+			mm: 'millimeters',
+			pc: 'pica (i.e., 12pt)',
+			pt: 'point (i.e., 1in / 72)',
+			px: 'pixels',
+			Q: '1/4 mm',
+			// '%': 'percentage',
+			// container:
+			// cqb, cqi
+			// cqh: '% of the container height',
+			// cqmax: 'Math.max(cqh, cqw)',
+			// cqmin: 'Math.min(cqh, cqw)',
+			// cqw: '% of the container width',
+			// font:
+			cap: 'line height (of capital letters)',
+			ch: 'character width (of "0")',
+			ic: 'glyph width (of "水")',
+			lh: 'line-height',
+			em: 'font size', // https://en.wikipedia.org/wiki/Em_%28typography%29#CSS
+			ex: 'x-height (of "x")', // https://en.wikipedia.org/wiki/X-height
+			// viewport:
+			// vb: '',
+			// vi: '',
+			// vmax: 'Math.max(vh, vw)',
+			// vmin: 'Math.min(vh, vw)',
+			// vh: 'viewport height',
+			// vw: 'viewport width',
+		}
 
-	onload=onresize=function()
-	{
-		const
-		{innerHeight:h,innerWidth:w}=window,
-		el=document.querySelector('#measure')
-		
+		const setAttribute = (el, attr, value) => (el.setAttribute(attr, value), el)
 
-		document.querySelector('main').innerHTML=''
+		const changeUnit = unit => void document.body.setAttribute('data-unit', unit)
+		const getAndOrCreateElement = unit =>
+			document.querySelector(`h3[data-unit="${unit}"]`) ||
+			document.body.appendChild(setAttribute(document.createElement('h3'), 'data-unit', unit))
 
+		window.onresize = () => {
+			/** @note The element to be resized to get the dimensions of each unit in pixels. */
+			const measurementElement = document.querySelector('#measure')
+			const measureUnitInPixels = unit =>
+				Object.assign(measurementElement, {
+					style: `height:1${unit}; width:1${unit};`,
+				}).getClientRects()[0].width
 
-		const factors=Object.keys(units)
-		.reduce(function(obj,unit)
-		{
-			resize(el,unit)
+			/** @note Record<unitType, pixelCount> */
+			const unitMeasurements = Object.keys(UNITS)
+				.sort()
+				.reduce((obj, unit) => Object.assign(obj, {[unit]: measureUnitInPixels(unit)}), {})
 
-			return Object.assign(obj,{[unit]:width(el)})
-		},{})
+			/** @note update displayed measurements */
+			Object.entries(unitMeasurements).map(([unit, scale]) => {
+				const heading = getAndOrCreateElement(unit)
 
-		const headings=Object.entries(factors)
-		.map(function([unit,scale])
-		{
-			const el=document.createElement('h2')
+				const width = (window.innerWidth / scale).toFixed(2)
+				const height = (window.innerHeight / scale).toFixed(2)
 
-			el.innerHTML=`${Math.round(w/scale)}x${Math.round(h/scale)} ${unit} (${units[unit]})`
-			el.setAttribute('onpointerover',`changeUnit('${unit}')`)
-	
-			return el
-		})
-		.forEach(el=>document.querySelector('main').appendChild(el))
-	}
-</script>
-<h1>How big is my screen?</h1>
-<main></main>
-<div id=measure></div>
+				heading.innerHTML = `${width}x${height} ${unit} (${UNITS[unit]})`
+				heading.addEventListener('pointerover', () => changeUnit(unit))
+
+				return heading
+			})
+		}
+
+		window.onload = () => {
+			window.onresize()
+
+			document.querySelector('#selected-unit-styles').innerHTML = Object.keys(UNITS)
+				.flatMap(unit => [
+					`[data-unit="${unit}"]{--sizeBackground: 1${unit};}`,
+					`[data-unit="${unit}"] h3[data-unit="${unit}"]{color:var(--colorSelectedText); }`,
+				])
+				.join('\n')
+		}
+	</script>
+	<div id="measure"></div>
+	<h1>How big is my screen?</h1>
+</body>
